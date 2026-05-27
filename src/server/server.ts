@@ -1,0 +1,79 @@
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import { loggerEndpoint, createLogger } from "../utils/logger.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
+
+export const StartServer = async (PORT: number) => {
+  try {
+    const logger = createLogger("Server");
+    dotenv.config();
+    const app = express();
+    app.use(express.json());
+    const corsOptions = {
+      origin: function (
+        origin: string | undefined,
+        callback: (err: Error | null, allow?: boolean) => void,
+      ) {
+        if (!origin) return callback(null, true);
+        if (origin.match(/^http:\/\/localhost:\d+$/)) {
+          return callback(null, true);
+        }
+        if (origin.match(/^http:\/\/127\.0\.0\.1:\d+$/)) {
+          return callback(null, true);
+        }
+
+        callback(new Error("Not allowed by CORS"));
+      },
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+      credentials: true,
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+    };
+
+    app.use(cors(corsOptions));
+    app.use(loggerEndpoint);
+    const swaggerSpec = swaggerJsdoc({
+      apis: ["./src/**/*.ts"],
+      definition: {
+        openapi: "3.0.0",
+        info: {
+          title: "TNV - Tech na Várzea",
+          version: "1.0.0",
+          description: ``,
+          contact: {
+            name: "Diego Melo - Desenvolvedor",
+            url: "https://github.com/DiegoHenriqueMelo",
+            email: "diegohenriquemelo14@gmail.com",
+          },
+          license: {
+            name: "MIT",
+            url: "https://opensource.org/licenses/MIT",
+          },
+        },
+      },
+    });
+
+    app.use(
+      "/docs",
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerSpec, {
+        customCss: ".swagger-ui .topbar { display: none }",
+        customSiteTitle: "TNV - Documentação",
+      }),
+    );
+
+    app.listen(PORT, () => {
+      logger.info(`Servidor iniciado com sucesso`, {
+        port: PORT,
+        environment: process.env.NODE_ENV || "development",
+        docsUrl: `http://localhost:${PORT}/docs`,
+      });
+    });
+  } catch (e) {
+    console.error("Erro ao iniciar servidor:", e);
+    process.exit(1);
+  }
+};
