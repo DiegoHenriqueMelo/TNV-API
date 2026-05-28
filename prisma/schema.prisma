@@ -1,13 +1,203 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum TipoUsuario {
+  CAPITAO
+  ARBITRO
+  ORGANIZADOR
+  ADMINISTRADOR
+}
+
+enum StatusCartao {
+  AMARELO
+  VERMELHO
+  AZUL
+}
+model Usuario {
+  id        Int         @id @default(autoincrement())
+  nome      String
+  email     String      @unique
+  senha     String
+  tipo      TipoUsuario
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  jogador Jogador? // preenchido se tipo == JOGADOR
+  arbitro Arbitro? // preenchido se tipo == ARBITRO
+}
+
+model Jogador {
+  id         Int      @id @default(autoincrement())
+  usuarioId  Int      @unique
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  nome       String?
+  numero     Int? 
+  posicao    String?
+  dataNasc   DateTime?
+
+  timeId Int?
+  time   Time? @relation(fields: [timeId], references: [id])
+
+  advertencias Advertencia[]
+
+  createdAt DateTime @default(now())
+}
+
+model Arbitro {
+  id         Int     @id @default(autoincrement())
+  usuarioId  Int     @unique
+  usuario    Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  campeonatos ArbitroCampeonato[]
+
+  advertencias Advertencia[]
+
+  createdAt DateTime @default(now())
+}
+
+model Time {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  sigla     String?  @db.VarChar(5)
+  cidade    String?
+  fundacao  DateTime?
+
+  jogadores Jogador[]
+
+  campeonatos TimeCampeonato[]
+
+  jogosCasa Jogo[] @relation("TimeCasa")
+  jogosFora Jogo[] @relation("TimeFora")
+
+  classificacoes Classificacao[]
+
+  createdAt DateTime @default(now())
+}
+
+model Jogo {
+  id          Int      @id @default(autoincrement())
+  data        DateTime
+  golsCasa    Int      @default(0)
+  golsFora    Int      @default(0)
+
+  timeCasaId  Int
+  timeCasa    Time     @relation("TimeCasa", fields: [timeCasaId], references: [id])
+  timeForaId  Int
+  timeFora    Time     @relation("TimeFora", fields: [timeForaId], references: [id])
+
+  campeonatoId Int
+  campeonato   Campeonato @relation(fields: [campeonatoId], references: [id])
+
+  advertencias Advertencia[]
+
+  createdAt DateTime @default(now())
+}
+
+model Campeonato {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  temporada String?
+  inicio    DateTime?
+  fim       DateTime?
+
+  times TimeCampeonato[]
+  arbitros ArbitroCampeonato[]
+  estadios CampeonatoEstadio[]
+  classificacoes Classificacao[]
+
+  jogos Jogo[]
+
+  createdAt DateTime @default(now())
+}
+
+model Estadio {
+  id         Int    @id @default(autoincrement())
+  nome       String
+  cidade     String?
+  capacidade Int?
+
+  campeonatos CampeonatoEstadio[]
+
+  createdAt DateTime @default(now())
+}
+
+model Classificacao {
+  id           Int        @id @default(autoincrement())
+  campeonatoId Int
+  campeonato   Campeonato @relation(fields: [campeonatoId], references: [id], onDelete: Cascade)
+  timeId       Int
+  time         Time       @relation(fields: [timeId], references: [id])
+
+  posicao      Int
+  pontos       Int @default(0)
+  vitorias     Int @default(0)
+  empates      Int @default(0)
+  derrotas     Int @default(0)
+  golsPro      Int @default(0)
+  golsContra   Int @default(0)
+  saldoGols    Int @default(0)
+
+  artilharia Artilharia[]
+
+  @@unique([campeonatoId, timeId])
+}
+
+model Artilharia {
+  id              Int           @id @default(autoincrement())
+  classificacaoId Int
+  classificacao   Classificacao @relation(fields: [classificacaoId], references: [id], onDelete: Cascade)
+
+  jogadorNome String
+  gols        Int    @default(0)
+  assistencias Int   @default(0)
+}
+
+model Advertencia {
+  id        Int          @id @default(autoincrement())
+  tipo      StatusCartao
+  minuto    Int?
+  motivo    String?
+
+  jogadorId Int
+  jogador   Jogador @relation(fields: [jogadorId], references: [id])
+  arbitroId Int
+  arbitro   Arbitro @relation(fields: [arbitroId], references: [id])
+  jogoId    Int?
+  jogo      Jogo?   @relation(fields: [jogoId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model TimeCampeonato {
+  timeId       Int
+  time         Time       @relation(fields: [timeId], references: [id], onDelete: Cascade)
+  campeonatoId Int
+  campeonato   Campeonato @relation(fields: [campeonatoId], references: [id], onDelete: Cascade)
+  inscritoEm   DateTime   @default(now())
+
+  @@id([timeId, campeonatoId])
+}
+
+model ArbitroCampeonato {
+  arbitroId    Int
+  arbitro      Arbitro    @relation(fields: [arbitroId], references: [id], onDelete: Cascade)
+  campeonatoId Int
+  campeonato   Campeonato @relation(fields: [campeonatoId], references: [id], onDelete: Cascade)
+
+  @@id([arbitroId, campeonatoId])
+}
+
+model CampeonatoEstadio {
+  campeonatoId Int
+  campeonato   Campeonato @relation(fields: [campeonatoId], references: [id], onDelete: Cascade)
+  estadioId    Int
+  estadio      Estadio    @relation(fields: [estadioId], references: [id], onDelete: Cascade)
+
+  @@id([campeonatoId, estadioId])
 }
