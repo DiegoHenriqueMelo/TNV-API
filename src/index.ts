@@ -1,4 +1,5 @@
 import { StartServer } from "./server/server.js";
+import dotenv from "dotenv";
+dotenv.config();
 
-StartServer(9090);
-
+StartServer(Number(process.env.PORT));
