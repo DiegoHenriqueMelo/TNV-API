@@ -44,7 +44,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL}
       - NODE_ENV=${NODE_ENV}
       - PORT=3000
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-557782}@postgres:5432/${POSTGRES_DB:-tnv}
+      - DATABASE_URL=${DATABASE_URL}
       - MONGO_URI=${MONGO_URI}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
