@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { loggerEndpoint, createLogger } from "../utils/logger.js";
+import { loginRoute } from "../router/login.route.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 
@@ -64,6 +65,7 @@ export const StartServer = async (PORT: number) => {
         customSiteTitle: "TNV - Documentação",
       }),
     );
+    app.use(loginRoute);
 
     app.listen(PORT, () => {
       logger.info(`Servidor iniciado com sucesso`, {
