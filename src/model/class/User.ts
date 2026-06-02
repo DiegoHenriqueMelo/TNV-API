@@ -8,8 +8,15 @@ export class User {
   public tipo: TipoUsuario;
   public createdAt: Date;
   public updatedAt: Date;
+  private token: string;
 
-  constructor(nome: string, email: string, senha: string, tipo: TipoUsuario) {
+  constructor(
+    nome: string,
+    email: string,
+    senha: string,
+    tipo: TipoUsuario,
+    token: string = "",
+  ) {
     this.id = 0;
     this.nome = nome;
     this.email = email;
@@ -17,5 +24,6 @@ export class User {
     this.tipo = tipo;
     this.createdAt = new Date();
     this.updatedAt = this.createdAt;
+    this.token = token;
   }
 }
