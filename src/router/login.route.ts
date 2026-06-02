@@ -11,8 +11,6 @@ export const loginRoute: Router = Router();
  *     summary: Libera acesso ao sistema
  *     tags:
  *       - Login
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
