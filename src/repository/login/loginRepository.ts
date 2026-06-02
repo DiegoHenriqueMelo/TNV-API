@@ -18,7 +18,7 @@ export const login = async (login: {
       logger.warn("Erro ao buscar usuario");
       throw new Error("Credenciais Inválidas");
     }
-    return new PromiseReturn(200, "Login realizado com sucesso", getUser);
+    return new PromiseReturn(200, "Login realizado com sucesso", getUser as unknown as User);
   } catch (e) {
     logger.info("Error in Repository");
     logger.error(String(e));
@@ -32,7 +32,7 @@ export const login = async (login: {
 export const create = async (user: User): Promise<PromiseReturn<User>> => {
   try {
     logger.info("Started in Repository");
-    logger.info("Buscando usuario...");
+    logger.info("Criando usuario...");
     const insertUser = await prisma.usuario.create({
       data: {
         nome: user.nome,
@@ -45,7 +45,7 @@ export const create = async (user: User): Promise<PromiseReturn<User>> => {
       logger.warn("Erro ao criar usuario");
       throw new Error("Erro ao criar usuario");
     }
-    return new PromiseReturn(201, "Login realizado com sucesso", insertUser);
+    return new PromiseReturn(201, "Usuário criado com sucesso", insertUser as unknown as User);
   } catch (e) {
     logger.info("Error in Repository");
     logger.error(String(e));
