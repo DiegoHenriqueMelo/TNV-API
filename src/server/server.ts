@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { loggerEndpoint, createLogger } from "../utils/logger.js";
 import { loginRoute } from "../router/login.route.js";
 import { teamRoute } from "../router/team.route.js";
+import { playerRoute } from "../router/player.route.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 
@@ -77,6 +78,7 @@ export const StartServer = async (PORT: number) => {
     );
     app.use(loginRoute);
     app.use(teamRoute);
+    app.use(playerRoute);
 
     app.listen(PORT, () => {
       logger.info(`Servidor iniciado com sucesso`, {
