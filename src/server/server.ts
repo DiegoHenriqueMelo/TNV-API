@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { loggerEndpoint, createLogger } from "../utils/logger.js";
 import { loginRoute } from "../router/login.route.js";
+import { teamRoute } from "../router/team.route.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 
@@ -54,6 +55,15 @@ export const StartServer = async (PORT: number) => {
             url: "https://opensource.org/licenses/MIT",
           },
         },
+        components: {
+          securitySchemes: {
+            BearerAuth: {
+              type: "http",
+              scheme: "bearer",
+              bearerFormat: "JWT",
+            },
+          },
+        },
       },
     });
 
@@ -66,6 +76,7 @@ export const StartServer = async (PORT: number) => {
       }),
     );
     app.use(loginRoute);
+    app.use(teamRoute);
 
     app.listen(PORT, () => {
       logger.info(`Servidor iniciado com sucesso`, {
