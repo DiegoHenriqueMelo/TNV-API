@@ -62,11 +62,13 @@ model Arbitro {
 }
 
 model Time {
-  id        Int      @id @default(autoincrement())
-  nome      String
-  sigla     String?  @db.VarChar(5)
-  cidade    String?
-  fundacao  DateTime?
+  id             Int      @id @default(autoincrement())
+  nome           String
+  sigla          String?  @db.VarChar(5)
+  cidade         String?
+  fundacao       DateTime?
+  corPrimaria   String?  @db.VarChar(7)
+  corSecundaria String?  @db.VarChar(7)
 
   jogadores Jogador[]
 
