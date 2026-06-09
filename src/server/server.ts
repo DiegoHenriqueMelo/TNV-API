@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
 import { loggerEndpoint, createLogger } from "../utils/logger.js";
 import { loginRoute } from "../router/login.route.js";
 import { teamRoute } from "../router/team.route.js";
@@ -39,7 +40,7 @@ export const StartServer = async (PORT: number) => {
     app.use(cors(corsOptions));
     app.use(loggerEndpoint);
     const swaggerSpec = swaggerJsdoc({
-      apis: ["./src/**/*.ts"],
+      apis: [path.resolve(__dirname, "../../src/**/*.ts").replace(/\\/g, "/")],
       definition: {
         openapi: "3.0.0",
         info: {

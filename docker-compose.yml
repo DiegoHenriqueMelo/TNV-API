@@ -39,11 +39,11 @@ services:
       dockerfile: src/Dockerfile
     container_name: api
     ports:
-      - "3000:3000"
+      - "4000:4000"
     environment:
       - LOG_LEVEL=${LOG_LEVEL}
       - NODE_ENV=${NODE_ENV}
-      - PORT=3000
+      - PORT=4000
       - DATABASE_URL=${DATABASE_URL}
       - MONGO_URI=${MONGO_URI}
       - JWT_SECRET=${JWT_SECRET}
