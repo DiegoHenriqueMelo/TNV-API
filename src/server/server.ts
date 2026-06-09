@@ -16,20 +16,7 @@ export const StartServer = async (PORT: number) => {
     const app = express();
     app.use(express.json());
     const corsOptions = {
-      origin: function (
-        origin: string | undefined,
-        callback: (err: Error | null, allow?: boolean) => void,
-      ) {
-        if (!origin) return callback(null, true);
-        if (origin.match(/^http:\/\/localhost:\d+$/)) {
-          return callback(null, true);
-        }
-        if (origin.match(/^http:\/\/127\.0\.0\.1:\d+$/)) {
-          return callback(null, true);
-        }
-
-        callback(new Error("Not allowed by CORS"));
-      },
+      origin: "*",
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
       credentials: true,
