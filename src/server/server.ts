@@ -16,7 +16,7 @@ export const StartServer = async (PORT: number) => {
     const app = express();
     app.use(express.json());
     const corsOptions = {
-      origin: "*",
+      origin:"http://72.61.58.205",
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
       credentials: true,
@@ -27,7 +27,10 @@ export const StartServer = async (PORT: number) => {
     app.use(cors(corsOptions));
     app.use(loggerEndpoint);
     const swaggerSpec = swaggerJsdoc({
-      apis: [path.resolve(__dirname, "../../src/**/*.ts").replace(/\\/g, "/")],
+      apis: [
+        "./src/**/*.ts",
+        "./dist/**/*.js"
+      ],
       definition: {
         openapi: "3.0.0",
         info: {
