@@ -21,9 +21,20 @@ jobs:
           script: |
             set -e
 
+            if [ ! -d /root/apps/TNV-API.git ]; then
+              echo "Repository not found. Cloning for first deploy..."
+              git clone --branch main https://github.com/DiegoHenriqueMelo/TNV-API.git /opt/tnv-api
+            fi
+
             cd /opt/tnv-api
 
+            if [ ! -f .env ]; then
+              echo "ERROR: /root/apps/TNV-API.env not found. Create it on the server before deploying."
+              exit 1
+            fi
+
             echo "Pulling latest changes..."
+            git checkout main
             git pull origin main
 
             echo "Rebuilding and restarting containers..."
